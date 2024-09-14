@@ -1,4 +1,4 @@
-FILES = public/index.php public/create.php public/style.css
+FILES = public/index.php public/overview.php public/style.css
 
 ifeq ($(PREFIX),)
 	PREFIX := /srv/http/
