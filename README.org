@@ -1,3 +1,16 @@
 #+title: CSV Cash
 #+author: Fabian Brosda
 
+This is a very small helper page, to write done your cash expenses on your
+phone, while not at home.  The records are stored in a csv file, which is
+intended for import into [[https://gnucash.org/][GNUCash]] later on.
+
+* Installation
+- Required are php and some web server
+- Add the files in [[file:public/][public]] to the server
+- Make the page accessible
+
+Now all cash expenses can be written down with minimal effort.
+
+* Improvements
+Add offline support
