@@ -13,5 +13,5 @@ intended for import into [[https://gnucash.org/][GNUCash]] later on.
 Now all cash expenses can be written down with minimal effort.
 
 * Improvements
-- [ ] Auto completion for description and amount
+- [X] Auto completion for description and amount
 - [ ] Add offline support

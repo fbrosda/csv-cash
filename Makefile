@@ -15,5 +15,4 @@ uninstall:
 	rmdir $(DESTDIR)$(PREFIX)/cash/data/
 	rmdir $(DESTDIR)$(PREFIX)/cash/
 
-
-.PHONY: install
+.PHONY: install uninstall

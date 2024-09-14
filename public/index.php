@@ -8,6 +8,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				fclose($handle);
 		}
 }
+
+function getAutocompleteValues($start) {
+		$values = array();
+		if (($handle = fopen("data/transactions.csv", "r")) !== FALSE) {
+				while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
+						$num = count($data);
+						for ($c=$start; $c < $num; $c += 3) {
+								$values[] = $data[$c];
+						}
+				}
+				fclose($handle);
+		}
+
+		foreach (array_unique($values) as $val) {
+				echo "<option>" . $val . "</option>";
+		}
+}
 ?>
 <html>
   <head>
@@ -25,12 +42,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 						 value="<?php echo $today?>" max="<?php echo $today?>" required />
 
 			<label for="description">Description</label>
-			<input id="description" name="description" type="text" required/>
+			<input id="description" name="description" type="text" list="description-list" required/>
 
 			<label for="amount">Amount</label>
-			<input id="amount" name="amount" type="number" min="0" step="0.01" required/>
+			<input id="amount" name="amount" type="number" min="0" step="0.01" list="amount-list" required/>
 			
 			<button>Save</button>
+
+			<datalist id="description-list">
+				<?php getAutocompleteValues(1) ?>
+			</datalist>
+
+			<datalist id="amount-list">
+				<?php getAutocompleteValues(2) ?>
+			</datalist>
 		</form>
+
+		<div style="margin-top: 20px; text-align: right;">
+			see <a href="overview.php">Overview</a>
+		</div>
   </body>
 </html>
