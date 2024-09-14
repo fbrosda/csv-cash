@@ -8,6 +8,8 @@ intended for import into [[https://gnucash.org/][GNUCash]] later on.
 * Installation
 - Required are PHP and some web server
 - Add the files in [[file:public/][public]] to the server
+- Make sure the created ~data~ directory is writable by the process your
+  web-server is executed in
 - Make the page accessible
 
 Now all cash expenses can be written down with minimal effort.
