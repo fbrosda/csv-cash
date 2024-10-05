@@ -42,10 +42,10 @@ function getAutocompleteValues($start) {
 						 value="<?php echo $today?>" max="<?php echo $today?>" required />
 
 			<label for="description">Description</label>
-			<input id="description" name="description" type="text" list="description-list" required/>
+			<input id="description" name="description" type="text" placeholder="Einkaufen" list="description-list" required/>
 
 			<label for="amount">Amount</label>
-			<input id="amount" name="amount" type="number" min="0" step="0.01" list="amount-list" required/>
+			<input id="amount" name="amount" type="number" min="0" step="0.01" placeholder="1,23" list="amount-list" required/>
 			
 			<button>Save</button>
 
