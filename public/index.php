@@ -4,7 +4,7 @@ $today = date("Y-m-d");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		if (($handle = fopen("data/transactions.csv", "a")) !== FALSE) {
-				fputcsv($handle, array($_POST["date"], $_POST["description"], $_POST["amount"]));
+				fputcsv($handle, array($_POST["date"], $_POST["description"], number_format($_POST["amount"]), 2, ',', ''), ";");
 				fclose($handle);
 		}
 }
@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 function getAutocompleteValues($start) {
 		$values = array();
 		if (($handle = fopen("data/transactions.csv", "r")) !== FALSE) {
-				while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
+				while (($data = fgetcsv($handle, 0, ";")) !== FALSE) {
 						$num = count($data);
 						for ($c=$start; $c < $num; $c += 3) {
 								$values[] = $data[$c];

@@ -20,7 +20,7 @@
 			<?php
 			$row = 1;
 			if (($handle = fopen("data/transactions.csv", "r")) !== FALSE) {
-					while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
+					while (($data = fgetcsv($handle, 0, ";")) !== FALSE) {
 							$num = count($data);
 							$row++;
 							echo "<tr>";
