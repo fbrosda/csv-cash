@@ -4,7 +4,7 @@ $today = date("Y-m-d");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		if (($handle = fopen("data/transactions.csv", "a")) !== FALSE) {
-				fputcsv($handle, array($_POST["date"], $_POST["description"], number_format($_POST["amount"]), 2, ',', ''), ";");
+				fputcsv($handle, array($_POST["date"], $_POST["description"], number_format($_POST["amount"], 2, ',', '')), ";");
 				fclose($handle);
 		}
 }
