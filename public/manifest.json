@@ -1,0 +1,16 @@
+{
+    "short_name": "CC",
+    "name": "CSV Cash",
+    "icons": [{
+        "src": "/favicon.png",
+        "type": "image/png"
+    }, {
+        "src": "/favicon.svg",
+        "type": "image/svg"
+    }],
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#222",
+    "background_color": "#fff",
+    "lang": "en"
+}

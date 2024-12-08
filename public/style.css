@@ -1,12 +1,23 @@
 :root {
 	--fg-color: #222;
 	--bg-color: white;
-	--bg-code: ghostwhite;
 	--font-size: 16px;
 	--marg-vert: calc(var(--font-size) * 0.75);
 	--marg-hori: calc(var(--font-size) * 0.5);
 	--font-family: sans-serif;
+	--link-color: darkblue;
+	--link-visited: indigo;
 }
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--fg-color: white;
+		--bg-color: #222;
+		--link-color: skyblue;
+		--link-visited: orchid;
+	}
+}
+
 html {
 	font-size: var(--font-size);
 	font-family: var(--font-family);
@@ -51,7 +62,7 @@ table {
 	border-collapse: collapse;
 
 	th, td {
-		padding: 4px;
+		padding: calc(var(--font-size) * 0.25);
 	}
 
 	th {
@@ -72,25 +83,32 @@ table {
 	}
 }
 
-@media only screen and (max-width: 30rem) {
-	form {
-		grid-template-columns: auto;
-		grid-row-gap: 4px;
+a {
+	text-decoration: none;
 
-		button {
-			grid-column: 1;
-			margin-top: 20px;
-		}
+	&:hover {
+		text-decoration: underline;
+	}
+	&:link {
+		color: var(--link-color);
+	}
+	&:visited {
+		color: var(--link-visited);
 	}
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--fg-color: white;
-		--bg-color: #222;
-		--link-color: skyblue;
-		--link-visited: orchid;
-		--bg-code: gray;
-		--sh-code: dimgray;
+@media only screen and (max-width: 30rem) {
+	form {
+		grid-template-columns: auto;
+		grid-row-gap: var(--marg-vert);
+
+		input {
+			margin-top: calc(var(--marg-vert) * -1);
+		}
+
+		button {
+			grid-column: 1;
+			margin-top: var(--marg-vert);
+		}
 	}
 }

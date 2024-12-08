@@ -27,14 +27,19 @@ function getAutocompleteValues($start) {
 }
 ?>
 <html>
-  <head>
-		<title>Create New Record</title>
+	<head>
+		<title>CC - Record</title>
+
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
 		<link rel="stylesheet" type="text/css" href="style.css" />
-		<link rel="icon" href="data:,">
-  </head>
-  <body>
+		<link rel="manifest" href="manifest.json" />
+		<link rel="icon" href="favicon.png" />
+
+		<script type="module" src="main.js"></script>
+	</head>
+	<body>
 		<h1>Create new Record</h1>
 		<form method="POST">
 			<label for="date">Date</label>
@@ -46,7 +51,7 @@ function getAutocompleteValues($start) {
 
 			<label for="amount">Amount</label>
 			<input id="amount" name="amount" type="number" min="0" step="0.01" placeholder="1,23" list="amount-list" required/>
-			
+
 			<button>Save</button>
 
 			<datalist id="description-list">
@@ -61,5 +66,5 @@ function getAutocompleteValues($start) {
 		<div style="margin-top: 20px; text-align: right;">
 			see <a href="overview.php">Overview</a>
 		</div>
-  </body>
+	</body>
 </html>
