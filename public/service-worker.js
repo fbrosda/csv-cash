@@ -1,5 +1,5 @@
 const resources = [
-    '/', 'index.php',
+    '.', 'index.php',
     'overview.php',
     'style.css',
     'main.js',
