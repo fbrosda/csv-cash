@@ -7,7 +7,9 @@ async function init() {
         });
 
         if(registration.sync) {
-            registration.sync.register("send-records");
+            registration.sync.register("sync_records");
+        } else {
+            registration.active.postMessage('sync_records');
         }
     } catch (error) {
         console.error(`Registration failed with ${error}`);

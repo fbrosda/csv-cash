@@ -22,13 +22,15 @@ self.addEventListener("message", (event) => {
     const name = event.data;
     if(name === 'get_entries') {
         postEntries(event.source);
+    } else if(name === 'sync_records') {
+        event.waitUntil(sendRecords());
     } else {
         console.log('Unknown event: ', name);
     }
 });
 
 self.addEventListener("sync", (event) => {
-  if (event.tag == "send-records") {
+  if (event.tag == "sync_records") {
     event.waitUntil(sendRecords());
   } else {
       console.log('Unknown event tag: ', event.tag);
@@ -57,10 +59,12 @@ async function postEntries(client) {
 }
 
 async function sendRecords() {
-    const data = readData();
+    const data = await readData();
     if(data?.length) {
-        await Promise.all(data.map(sendRecord));
-        clearData();
+        try {
+            await Promise.all(data.map(sendRecord));
+            clearData();
+        } catch(e) { }
     }
 
     function sendRecord(rec) {
@@ -68,7 +72,7 @@ async function sendRecords() {
         for(const key in rec) {
             formData.append(key, rec[key]);
         }
-        return fetch('', {
+        return fetch('index.php', {
             method: 'POST',
             body: formData
         });
