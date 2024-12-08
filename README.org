@@ -16,4 +16,4 @@ Now all cash expenses can be written down with minimal effort.
 
 * Improvements
 - [X] Auto completion for description and amount
-- [ ] Add offline support
+- [X] Add offline support -> Added service worker
