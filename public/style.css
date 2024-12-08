@@ -70,6 +70,10 @@ table {
 		text-align: left;
 	}
 
+	tr.pending {
+		background-color: #f3f3f3;
+	}
+
 	td {
 		border-right: 1px solid;
 
