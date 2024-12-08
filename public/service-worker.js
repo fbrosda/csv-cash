@@ -77,23 +77,24 @@ async function sendRecords() {
 
 async function postPage(request) {
     const formData = await request.formData();
-    const response = fetch(request.url, {
-        method: 'POST',
-        body: formData
-    });
-    if(response) {
-        return response;
+    try {
+        return await fetch(request.url, {
+            method: 'POST',
+            body: formData
+        });
+    } catch {
+        return storeFormLocal(request, formData);
     }
-    return storeFormLocal(request, formData);
 }
 
 async function getPage(request) {
-    const response = await fetch(request);
-    if(response) {
+    try {
+        const response = await fetch(request);
         cacheAdd(request, response);
         return response;
+    } catch {
+        return caches.match(request);
     }
-    return caches.match(request);
 }
 
 async function fetchStaticContent(request) {
