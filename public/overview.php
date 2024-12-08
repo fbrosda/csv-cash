@@ -38,26 +38,30 @@
 			?>
 		</table>
 
-		<script type="text/javascript">
-		 navigator.serviceWorker.onmessage = (event) => {
-				 const str = event.data;
-				 const tbody = document.getElementsByTagName('tbody')[0];
-				 if(str && tbody) {
-						 const data = JSON.parse(str);
-						 if(data?.length) {
-								 data.forEach(elem => {
-										 const tr = document.createElement('tr');
-										 tr.classList.add('pending');
-										 tr.innerHTML = `<td>${elem.date}</td><td>${elem.description}</td><td>${elem.amount}</td>`;
-										 tbody.appendChild(tr);
-								 });
+		<script type="module">
+		 navigator?.serviceWorker && init();
+
+		 async function init() {
+				 const registration = await navigator.serviceWorker.ready;
+				 navigator.serviceWorker.addEventListener('message', receiveMessage);
+				 registration.active.postMessage('get_entries');
+
+				 function receiveMessage(event) {
+						 const str = event.data;
+						 const tbody = document.getElementsByTagName('tbody')[0];
+						 if(str && tbody) {
+								 const data = JSON.parse(str);
+								 if(data?.length) {
+										 data.forEach(elem => {
+												 const tr = document.createElement('tr');
+												 tr.classList.add('pending');
+												 tr.innerHTML = `<td>${elem.date}</td><td>${elem.description}</td><td>${elem.amount}</td>`;
+												 tbody.appendChild(tr);
+										 });
+								 }
 						 }
 				 }
-				 console.log(event.data)
-		 };
-		 navigator.serviceWorker.ready.then((registration) => {
-				 registration.active.postMessage('get_entries');
-		 });
+		 }
 		</script>
 	</body>
 </html>

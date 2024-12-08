@@ -27,10 +27,13 @@ self.addEventListener("message", (event) => {
     }
 });
 
-async function postEntries(client) {
-    const data = await readData();
-    client.postMessage(JSON.stringify(data));
-}
+self.addEventListener("sync", (event) => {
+  if (event.tag == "send-records") {
+    event.waitUntil(sendRecords());
+  } else {
+      console.log('Unknown event tag: ', event.tag);
+  }
+});
 
 async function addResourcesToCache(resources) {
     const cache = await getCache();
@@ -48,15 +51,39 @@ async function fetchWithCach(request) {
     return fetchStaticContent(request);
 }
 
+async function postEntries(client) {
+    const data = await readData();
+    client.postMessage(JSON.stringify(data));
+}
+
+async function sendRecords() {
+    const data = readData();
+    if(data?.length) {
+        await Promise.all(data.map(sendRecord));
+        clearData();
+    }
+
+    function sendRecord(rec) {
+        const formData = new FormData();
+        for(const key in rec) {
+            formData.append(key, rec[key]);
+        }
+        return fetch('', {
+            method: 'POST',
+            body: formData
+        });
+    }
+}
+
 async function postPage(request) {
     const formData = await request.formData();
-    // const response = fetch(request.url, {
-    //     method: 'POST',
-    //     body: formData
-    // });
-    // if(response) {
-    //     return response;
-    // }
+    const response = fetch(request.url, {
+        method: 'POST',
+        body: formData
+    });
+    if(response) {
+        return response;
+    }
     return storeFormLocal(request, formData);
 }
 
@@ -95,10 +122,7 @@ async function cacheAdd(request, response) {
 async function storeData(data) {
     const db = await openDB();
     return new Promise((resolve, reject) => {
-        const transaction = db.transaction([storeName], 'readwrite');
-        transaction.onerror = (event) => reject(new Error('Cannot start tranaction: ', event.target.error?.message));
-        transaction.oncomplete = () => resolve();
-
+        const transaction = getTransaction(db, storeName, 'readwrite', resolve, reject);
         const objStore = transaction.objectStore(storeName);
         const req = objStore.add(data);
         req.onerror = (event) => reject(new Error('Cannot write data: ', event.target.error?.message));
@@ -108,22 +132,21 @@ async function storeData(data) {
 
 async function readData() {
     const db = await openDB();
-    const res = [];
     return new Promise((resolve, reject) => {
-        const transaction = db.transaction([storeName]);
-        transaction.onerror = (event) => reject(new Error('Cannot start tranaction: ', event.target.error?.message));
-        transaction.oncomplete = (event) => resolve();
-
+        const transaction = getTransaction(db, storeName, 'readonly', resolve, reject);
         const objStore = transaction.objectStore(storeName);
-        objStore.openCursor().onsuccess = (event) => {
-            const cursor = event.target.result;
-            if (cursor) {
-                res.push(cursor.value);
-                cursor.continue();
-            } else {
-                resolve(res);
-            }
+        objStore.getAll().onsuccess = (event) => {
+            resolve(event.target.result);
         };
+    });
+}
+
+async function clearData() {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const transaction = getTransaction(db, storeName, 'readwrite', resolve, reject);
+        const objStore = transaction.objectStore(storeName);
+        objStore.clear();
     });
 }
 
@@ -141,6 +164,13 @@ function openDB() {
             resolve(event.target.result);
         };
     });
+}
+
+function getTransaction(db, name, mode, resolve, reject) {
+    const transaction = db.transaction([name], mode);
+    transaction.onerror = (event) => reject(new Error('Cannot start transaction: ', event.target.error?.message));
+    transaction.oncomplete = () => resolve();
+    return transaction;
 }
 
 function getCache() {
