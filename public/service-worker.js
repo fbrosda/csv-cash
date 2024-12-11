@@ -5,10 +5,6 @@ const resources = [
     'favicon.png',
     'manifest.json'
 ];
-const dbName = 'csv-cash';
-const dbVersion = 1;
-const storeName = 'records';
-
 
 self.addEventListener("install", (event) => {
     event.waitUntil(addResourcesToCache(pages.concat(resources)));
@@ -117,39 +113,44 @@ async function storeFormLocal(request, formData) {
     return cacheGet(request);
 }
 
-async function storeData(data) {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-        const transaction = getTransaction(db, storeName, 'readwrite', resolve, reject);
-        const objStore = transaction.objectStore(storeName);
+function storeData(data) {
+    return new Promise(async (resolve, reject) => {
+        const objStore = await getObjectStore('readwrite', resolve, reject);
         const req = objStore.add(data);
         req.onerror = (event) => reject(new Error('Cannot write data: ', event.target.error?.message));
 
     });
 }
 
-async function readData() {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-        const transaction = getTransaction(db, storeName, 'readonly', resolve, reject);
-        const objStore = transaction.objectStore(storeName);
+function readData() {
+    return new Promise(async (resolve, reject) => {
+        const objStore = await getObjectStore('readonly', resolve, reject);
         objStore.getAll().onsuccess = (event) => {
             resolve(event.target.result);
         };
     });
 }
 
-async function clearData() {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-        const transaction = getTransaction(db, storeName, 'readwrite', resolve, reject);
-        const objStore = transaction.objectStore(storeName);
+function clearData() {
+    return new Promise(async (resolve, reject) => {
+        const objStore = await getObjectStore('readwrite', resolve, reject);
         objStore.clear();
     });
 }
 
-function openDB() {
+async function getObjectStore(mode, resolve, reject) {
+    const storeName = 'records';
+    const db = await openDB(storeName);
+    const transaction = db.transaction([storeName], mode);
+    transaction.onerror = (event) => reject(new Error('Cannot start transaction: ', event.target.error?.message));
+    transaction.oncomplete = () => resolve();
+    return transaction.objectStore(storeName);
+}
+
+function openDB(storeName) {
     return new Promise((resolve, reject) => {
+        const dbName = 'csv-cash';
+        const dbVersion = 1;
         const req = indexedDB.open(dbName, dbVersion);
         req.onerror = (event) => {
             reject(new Error('Cannot open db: ', event.target.error?.message));
@@ -162,13 +163,6 @@ function openDB() {
             resolve(event.target.result);
         };
     });
-}
-
-function getTransaction(db, name, mode, resolve, reject) {
-    const transaction = db.transaction([name], mode);
-    transaction.onerror = (event) => reject(new Error('Cannot start transaction: ', event.target.error?.message));
-    transaction.oncomplete = () => resolve();
-    return transaction;
 }
 
 async function cachePut(request, response) {
