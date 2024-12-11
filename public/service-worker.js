@@ -94,15 +94,15 @@ async function postPage(request) {
 async function getPage(request) {
     try {
         const response = await fetch(request);
-        cacheAdd(request, response);
-        return response;
+        await cachePut(request, response);
+        return response.clone();
     } catch {
-        return caches.match(request);
+        return cacheGet(request);
     }
 }
 
 async function fetchStaticContent(request) {
-    const response = await caches.match(request);
+    const response = await cacheGet(request);
     return response || fetch(request);
 }
 
@@ -114,14 +114,7 @@ async function storeFormLocal(request, formData) {
     } catch (e) {
         console.error(e);
     }
-
-    const cache = await getCache();
-    return cache.match(request.url);
-}
-
-async function cacheAdd(request, response) {
-    const cache = await getCache();
-    await cache.put(request, response);
+    return cacheGet(request);
 }
 
 async function storeData(data) {
@@ -176,6 +169,16 @@ function getTransaction(db, name, mode, resolve, reject) {
     transaction.onerror = (event) => reject(new Error('Cannot start transaction: ', event.target.error?.message));
     transaction.oncomplete = () => resolve();
     return transaction;
+}
+
+async function cachePut(request, response) {
+    const cache = await getCache();
+    await cache.put(request.url, response);
+}
+
+async function cacheGet(request) {
+    const cache = await getCache();
+    return cache.match(request.url);
 }
 
 function getCache() {
