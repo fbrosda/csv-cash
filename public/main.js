@@ -3,7 +3,7 @@ navigator?.serviceWorker && init();
 async function init() {
     try {
         const registration = await navigator.serviceWorker.register("service-worker.js", {
-            scope: location.pathname,
+            scope: '/' + location.pathname.substring(0, location.pathname.indexOf('/'))
         });
 
         if(registration.sync) {
